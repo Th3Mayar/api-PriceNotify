@@ -1,9 +1,9 @@
-const Usuario = require("../models/Usuario");
-const Producto = require("../models/Producto");
-
-const bcryptjs = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-require("dotenv").config({ path: "variables.env" });
+import Usuario from "../models/Usuario.js";
+import Producto from '../models/Producto.js'
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from 'dotenv'
+dotenv.config({ path: "variables.env" })
 
 const crearToken = (usuario, secreta, expiresIn) => {
   console.log(usuario);
@@ -19,8 +19,11 @@ const resolvers = {
       console.log(usuarioToken)
       if (!usuarioToken) throw new Error("No se pudo autenticar el token");
       try {
-        const usuarioDB = await Usuario.findById(usuarioToken.id);
+        const usuarioDB = await Usuario.findById(usuarioToken.id).populate({
+          path: "productos"
+        });
         if (!usuarioDB) throw new Error("El usuario no existe");
+
         return usuarioDB;
       } catch (error) {
         console.log("Error en la consulta del usuario");
@@ -43,6 +46,18 @@ const resolvers = {
         throw new Error("El producto no existe");
       }
       return producto;
+    },
+    obtenerUsuariosConProductos: async () => {
+      try {
+        // Obtener todos los usuarios con sus productos utilizando Mongoose
+        const usuariosConProductos = await Usuario.find().populate("productos");
+    
+        return usuariosConProductos;
+
+      } catch (error) {
+        console.log("Error al obtener usuarios con productos:", error);
+        throw new Error("No se pudieron obtener los usuarios con productos");
+      }
     },
   },
   Mutation: {
@@ -100,7 +115,26 @@ const resolvers = {
       await Producto.findByIdAndDelete({ _id: id });
       return "Producto eliminado";
     },
+    nuevoProducto: async (_, { input }, {usuario : usuarioToken}) => {
+      const newProduct = await new Producto(input);
+
+      if(!newProduct) throw new Error("No se pudo crear el producto");
+
+      // Revisar si el user anda registrado
+      const usuario = await Usuario.findById(usuarioToken.id);
+      usuario.productos.push(newProduct.id);
+      console.log(usuario);
+      
+      /*usuario.populate({
+        path: "productos"
+      });*/
+
+      await usuario.save();
+      newProduct.save();
+
+      return newProduct;
+    },
   },
 };
 
-module.exports = resolvers;
+export default resolvers;

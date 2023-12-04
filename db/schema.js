@@ -1,7 +1,18 @@
-const { gql } = require("apollo-server");
+import { gql } from "apollo-server";
 
-// Schema
 const typeDefs = gql`
+  type Producto {
+    id: ID
+    nombre: String
+    descripcion: String
+    precio: Float
+    precioStop: Float
+    url: String
+    createdAt: String
+    updatedAt: String
+    images: [String]
+  }
+
   type Usuario {
     id: ID
     nombre: String
@@ -12,6 +23,7 @@ const typeDefs = gql`
     phone: String
     address: String
     creado: String
+    productos: [Producto]
   }
   
   enum Gender {
@@ -24,18 +36,13 @@ const typeDefs = gql`
     token: String!
   }
 
-  type Producto {
-    id: ID
-    nombre: String
-    existencia: Int
-    precio: Float
-    creado: String
-  }
-
   input ProductoInput {
-    nombre: String!
-    existencia: Int
+    nombre: String
+    descripcion: String
     precio: Float
+    precioStop: Float
+    url: String
+    images: [String]
   }
   
   input UsuarioInput {
@@ -54,24 +61,25 @@ const typeDefs = gql`
   }
   
   type Query {
-    #Usuarios
+    # Usuarios
     obtenerUsuario(token: String!): Usuario
+    obtenerUsuariosConProductos: [Usuario]
 
-    #Productos
+    # Productos
     obtenerProductos: [Producto]
     obtenerProducto(id: ID!): Producto
   }
 
   type Mutation {
-    #Usuarios
+    # Usuarios
     nuevoUsuario(input: UsuarioInput): Usuario
     autenticarUsuario(input: AutenticarInput): Token
 
-    #Productos
+    # Productos
     nuevoProducto(input: ProductoInput): Producto
     actualizarProducto(id: ID!, input: ProductoInput): Producto
     eliminarProducto(id: ID!): String
   }
 `;
 
-module.exports = typeDefs;
+export default typeDefs;

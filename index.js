@@ -1,9 +1,10 @@
-const { ApolloServer } = require("apollo-server");
-const typeDefs = require("./db/schema");
-const resolvers = require("./db/resolvers");
-const connectDB = require("./config/db");
-const jwt = require("jsonwebtoken");
-require("dotenv").config({ path: "variables.env" });
+import { ApolloServer } from "apollo-server";
+import typeDefs from "./db/schema.js";
+import resolvers from "./db/resolvers.js";
+import connectDB from "./config/db.js";
+import jwt from "jsonwebtoken";
+import dotenv from 'dotenv'
+dotenv.config({ path: "variables.env" });
 
 // connect to data base
 connectDB();
@@ -25,6 +26,7 @@ const server = new ApolloServer({
         return {
           usuario
         }
+        
       } catch (error) {
         console.log("Hubo un error");
         console.log(error);

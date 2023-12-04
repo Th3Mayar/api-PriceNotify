@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const usuarioSchema = mongoose.Schema({
   nombre: {
     type: String,
-    required: true,
+    required: false,
   },
   apellido: {
     type: String,
-    required: true,
+    required: false,
   },
   email: {
     type: String,
@@ -39,6 +39,10 @@ const usuarioSchema = mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  productos: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Producto"
+  }]
 });
 
-module.exports = mongoose.model("Usuario", usuarioSchema);
+export default mongoose.model("Usuario", usuarioSchema);

@@ -1,25 +1,38 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const productoSchema = mongoose.Schema({
-  nombre: {
-    type: String,
-    required: true,
-    trim: true,
+const productoSchema = mongoose.Schema(
+  {
+    nombre: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    descripcion: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    precio: {
+      type: Number,
+      required: true,
+    },
+    precioStop: {
+      type: Number,
+      required: true,
+    },
+    url: {
+      type: String,
+      require: true,
+      trim: true,
+    },
+    images: [{
+      type: String
+    }]
   },
-  existencia: {
-    type: Number,
-    required: true,
-    trim: true,
-  },
-  precio: {
-    type: Number,
-    required: true,
-    trim: true,
-  },
-  creado: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+  {
+    timestamps: true,
+    versionKey: false,
+  }
+);
 
-module.exports = mongoose.model("Producto", productoSchema);
+export default mongoose.model("Producto", productoSchema);
