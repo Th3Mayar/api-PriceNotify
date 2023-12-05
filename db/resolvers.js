@@ -1,9 +1,9 @@
 import Usuario from "../models/Usuario.js";
-import Producto from '../models/Producto.js'
+import Producto from "../models/Producto.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv'
-dotenv.config({ path: "variables.env" })
+import dotenv from "dotenv";
+dotenv.config({ path: "variables.env" });
 
 const crearToken = (usuario, secreta, expiresIn) => {
   console.log(usuario);
@@ -16,11 +16,11 @@ const resolvers = {
   Query: {
     obtenerUsuario: async (_, { token }) => {
       const usuarioToken = await jwt.verify(token, process.env.SECRETA);
-      console.log(usuarioToken)
+      console.log(usuarioToken);
       if (!usuarioToken) throw new Error("No se pudo autenticar el token");
       try {
         const usuarioDB = await Usuario.findById(usuarioToken.id).populate({
-          path: "productos"
+          path: "productos",
         });
         if (!usuarioDB) throw new Error("El usuario no existe");
 
@@ -51,9 +51,8 @@ const resolvers = {
       try {
         // Obtener todos los usuarios con sus productos utilizando Mongoose
         const usuariosConProductos = await Usuario.find().populate("productos");
-    
-        return usuariosConProductos;
 
+        return usuariosConProductos;
       } catch (error) {
         console.log("Error al obtener usuarios con productos:", error);
         throw new Error("No se pudieron obtener los usuarios con productos");
@@ -115,16 +114,18 @@ const resolvers = {
       await Producto.findByIdAndDelete({ _id: id });
       return "Producto eliminado";
     },
-    nuevoProducto: async (_, { input }, {usuario : usuarioToken}) => {
+    nuevoProducto: async (_, { input }, { usuario: usuarioToken }) => {
+      console.log("input",input);
+      console.log("user",usuarioToken);
       const newProduct = await new Producto(input);
 
-      if(!newProduct) throw new Error("No se pudo crear el producto");
+      if (!newProduct) throw new Error("No se pudo crear el producto");
 
       // Revisar si el user anda registrado
       const usuario = await Usuario.findById(usuarioToken.id);
       usuario.productos.push(newProduct.id);
       console.log(usuario);
-      
+
       /*usuario.populate({
         path: "productos"
       });*/
