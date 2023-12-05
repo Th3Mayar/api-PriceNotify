@@ -48,8 +48,8 @@ const typeDefs = gql`
   input UsuarioInput {
     nombre: String
     apellido: String
-    email: String!
-    password: String!
+    email: String
+    password: String
     gender: Gender
     phone: String
     address: String
@@ -74,6 +74,7 @@ const typeDefs = gql`
     # Usuarios
     nuevoUsuario(input: UsuarioInput): Usuario
     autenticarUsuario(input: AutenticarInput): Token
+    editarUsuario(input: UsuarioInput): Usuario
 
     # Productos
     nuevoProducto(input: ProductoInput): Producto

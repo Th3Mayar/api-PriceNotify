@@ -49,7 +49,6 @@ const resolvers = {
     },
     obtenerUsuariosConProductos: async () => {
       try {
-        // Obtener todos los usuarios con sus productos utilizando Mongoose
         const usuariosConProductos = await Usuario.find().populate("productos");
 
         return usuariosConProductos;
@@ -134,6 +133,28 @@ const resolvers = {
       newProduct.save();
 
       return newProduct;
+    },
+    editarUsuario: async (_, { input }, {usuario}) => {
+      try {
+        if(input.password){
+          const salt = await bcryptjs.genSalt(10);
+          input.password = await bcryptjs.hash(input.password, salt);
+        }
+        const updatedUser = await Usuario.findByIdAndUpdate(
+          usuario.id,
+          { $set: input },
+          { new: true }
+        );
+  
+        if (!updatedUser) {
+          throw new Error('El usuario no fue encontrado');
+        }
+  
+        return updatedUser;
+      } catch (error) {
+        console.error('Error al editar usuario:', error);
+        throw new Error('Hubo un error al editar el usuario');
+      }
     },
   },
 };
