@@ -37,6 +37,9 @@ const typeDefs = gql`
     producto: Producto
     notification: String
     precio: Float
+    mensaje: String
+    createdAt: String
+    updatedAt: String
   }
 
   type Token {
@@ -63,10 +66,11 @@ const typeDefs = gql`
   }
 
   input NotificacionInput {
-    producto: ID
-    usuario: ID
+    producto: String
+    usuario: String
     notification: String
     precio: Float
+    mensaje: String
   }
 
   input AutenticarInput {

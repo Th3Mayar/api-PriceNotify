@@ -52,6 +52,7 @@ const resolvers = {
     },
     obtenerUsuariosConProductos: async () => {
       try {
+        console.log("Obteniendo usuario x productos")
         const usuariosConProductos = await Usuario.find().populate("productos");
 
         return usuariosConProductos;
@@ -60,9 +61,9 @@ const resolvers = {
         throw new Error("No se pudieron obtener los usuarios con productos");
       }
     },
-    obtenerNotificaciones: async () => {
+    obtenerNotificaciones: async (_, { }, {usuario}) => {
       try {
-        const notificaciones = await Notification.find({});
+        const notificaciones = await Notification.find({usuario: usuario.id}).populate('producto usuario');
         return notificaciones;
       } catch (error) {
         console.log(error);
@@ -174,17 +175,23 @@ const resolvers = {
       }
     },
     nuevaNotificacion: async (_, { input }) => {
-      console.log("input", input);
+      console.log(input.usuario);
       const newNotification = await new Notification(input);
 
       if (!newNotification)
         throw new Error("No se recibio ninguna notificacion");
 
-      newNotification.save();
+      await newNotification.save();
 
-      newNotification.usuario = Usuario.findById(newNotification.usuario);
-      newNotification.producto = Producto.findById(newNotification.producto);
+      newNotification.usuario = await Usuario.findById(newNotification.usuario);
+      newNotification.producto = await Producto.findById(newNotification.producto);
+      console.log(newNotification);
 
+      await sendEmail({
+        to : newNotification.usuario.email,
+        subject : `Tu producto alcanzó el precio de Stop`,
+        html: newNotification.notification
+      })
       return newNotification;
     },
   },

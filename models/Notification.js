@@ -17,8 +17,12 @@ const notificationSchema = mongoose.Schema(
     },
     precio: {
       type: Number,
-      required: true,
+      required: false,
     },
+    mensaje: {
+        type: String,
+        require: true,
+    }
   },
   {
     timestamps: true,
