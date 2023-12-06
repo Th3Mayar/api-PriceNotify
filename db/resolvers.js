@@ -1,5 +1,6 @@
 import Usuario from "../models/Usuario.js";
 import Producto from "../models/Producto.js";
+import Notification from "../models/Notification.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -59,6 +60,14 @@ const resolvers = {
         throw new Error("No se pudieron obtener los usuarios con productos");
       }
     },
+    obtenerNotificaciones: async () => {
+      try {
+        const notificaciones = await Notification.find({});
+        return notificaciones;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   Mutation: {
     nuevoUsuario: async (_, { input }) => {
@@ -78,10 +87,10 @@ const resolvers = {
         const usuario = new Usuario(input);
         usuario.save();
         sendEmail({
-          to:usuario.email,
-          subject:"Registro Completado",
-          html:"<h1>Se ha registrado con exito</h1>"
-        })
+          to: usuario.email,
+          subject: "Registro Completado",
+          html: "<h1>Se ha registrado con exito</h1>",
+        });
         return usuario;
       } catch (error) {
         console.log(error);
@@ -121,8 +130,8 @@ const resolvers = {
       return "Producto eliminado";
     },
     nuevoProducto: async (_, { input }, { usuario: usuarioToken }) => {
-      console.log("input",input);
-      console.log("user",usuarioToken);
+      console.log("input", input);
+      console.log("user", usuarioToken);
       const newProduct = await new Producto(input);
 
       if (!newProduct) throw new Error("No se pudo crear el producto");
@@ -141,10 +150,10 @@ const resolvers = {
 
       return newProduct;
     },
-    editarUsuario: async (_, { input }, {usuario}) => {
+    editarUsuario: async (_, { input }, { usuario }) => {
       try {
-        const {password,...inputbien}=input
-        if (input.password && password.lenght>0){
+        const { password, ...inputbien } = input;
+        if (input.password && password.lenght > 0) {
           const salt = await bcryptjs.genSalt(10);
           inputbien.password = await bcryptjs.hash(input.password, salt);
         }
@@ -153,16 +162,30 @@ const resolvers = {
           { $set: inputbien },
           { new: true }
         );
-  
+
         if (!updatedUser) {
-          throw new Error('El usuario no fue encontrado');
+          throw new Error("El usuario no fue encontrado");
         }
-  
+
         return updatedUser;
       } catch (error) {
-        console.error('Error al editar usuario:', error);
-        throw new Error('Hubo un error al editar el usuario');
+        console.error("Error al editar usuario:", error);
+        throw new Error("Hubo un error al editar el usuario");
       }
+    },
+    nuevaNotificacion: async (_, { input }) => {
+      console.log("input", input);
+      const newNotification = await new Notification(input);
+
+      if (!newNotification)
+        throw new Error("No se recibio ninguna notificacion");
+
+      newNotification.save();
+
+      newNotification.usuario = Usuario.findById(newNotification.usuario);
+      newNotification.producto = Producto.findById(newNotification.producto);
+
+      return newNotification;
     },
   },
 };

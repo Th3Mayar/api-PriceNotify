@@ -12,7 +12,7 @@ const typeDefs = gql`
     updatedAt: String
     images: [String]
   }
-
+  
   type Usuario {
     id: ID
     nombre: String
@@ -30,6 +30,13 @@ const typeDefs = gql`
     Male
     Female
     Other
+  }
+
+  type Notification {
+    usuario: Usuario
+    producto: Producto
+    notification: String
+    precio: Float
   }
 
   type Token {
@@ -55,6 +62,13 @@ const typeDefs = gql`
     address: String
   }
 
+  input NotificacionInput {
+    producto: ID
+    usuario: ID
+    notification: String
+    precio: Float
+  }
+
   input AutenticarInput {
     email: String!
     password: String!
@@ -68,6 +82,9 @@ const typeDefs = gql`
     # Productos
     obtenerProductos: [Producto]
     obtenerProducto(id: ID!): Producto
+
+    # Notificaciones
+    obtenerNotificaciones: [Notification]
   }
 
   type Mutation {
@@ -80,6 +97,9 @@ const typeDefs = gql`
     nuevoProducto(input: ProductoInput): Producto
     actualizarProducto(id: ID!, input: ProductoInput): Producto
     eliminarProducto(id: ID!): String
+
+    # Notificacion
+    nuevaNotificacion(input: NotificacionInput): Notification
   }
 `;
 
