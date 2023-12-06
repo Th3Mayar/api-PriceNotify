@@ -143,13 +143,14 @@ const resolvers = {
     },
     editarUsuario: async (_, { input }, {usuario}) => {
       try {
-        if(input.password){
+        const {password,...inputbien}=input
+        if (input.password && password.lenght>0){
           const salt = await bcryptjs.genSalt(10);
-          input.password = await bcryptjs.hash(input.password, salt);
+          inputbien.password = await bcryptjs.hash(input.password, salt);
         }
         const updatedUser = await Usuario.findByIdAndUpdate(
           usuario.id,
-          { $set: input },
+          { $set: inputbien },
           { new: true }
         );
   
