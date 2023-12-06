@@ -111,13 +111,13 @@ const resolvers = {
     },
     eliminarProducto: async (_, { id }) => {
       // Revisar si el producto existe
-      let producto = await Producto.findById(id);
+      let producto = await Producto.findByIdAndDelete(id);
+
       if (!producto) {
         throw new Error("El producto no existe");
       }
 
       // Eliminar producto
-      await Producto.findByIdAndDelete({ _id: id });
       return "Producto eliminado";
     },
     nuevoProducto: async (_, { input }, { usuario: usuarioToken }) => {
