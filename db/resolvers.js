@@ -3,6 +3,8 @@ import Producto from "../models/Producto.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import sendEmail from "../helper/email.js";
+
 dotenv.config({ path: "variables.env" });
 
 const crearToken = (usuario, secreta, expiresIn) => {
@@ -75,6 +77,11 @@ const resolvers = {
         // Guardar el user en la db
         const usuario = new Usuario(input);
         usuario.save();
+        sendEmail({
+          to:usuario.email,
+          subject:"Registro Completado",
+          html:"<h1>Se ha registrado con exito</h1>"
+        })
         return usuario;
       } catch (error) {
         console.log(error);

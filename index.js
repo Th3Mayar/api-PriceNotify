@@ -4,8 +4,9 @@ import resolvers from "./db/resolvers.js";
 import connectDB from "./config/db.js";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv'
-dotenv.config({ path: "variables.env" });
+import sendEmail from "./helper/email.js";
 
+dotenv.config({ path: "variables.env" });
 // connect to data base
 connectDB();
 
