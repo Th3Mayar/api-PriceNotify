@@ -90,7 +90,7 @@ const resolvers = {
         sendEmail({
           to: usuario.email,
           subject: "Registro Completado",
-          html: "<h1>Se ha registrado con exito</h1>",
+          html: `<h3><span style="color:blue;">${usuario.nombre} ${usuario.apellido}</span> Se ha registrado con exito en PriceNotify</h3>`,
         });
         return usuario;
       } catch (error) {
