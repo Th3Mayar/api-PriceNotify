@@ -1,8 +1,6 @@
 import nodemailer from "nodemailer"
 import {google} from "googleapis"
 
-
-
 const CLIENT_ID="324505200444-c246anim6lphth7g85kc1uv8t6bhh0u0.apps.googleusercontent.com"
 const CLIENT_SECRET="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"
 const REDIRECT_URI="https://developers.google.com/oauthplayground"
